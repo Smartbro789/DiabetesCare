@@ -14,7 +14,6 @@ export const Login = () => {
     const dispatch = useDispatch();
     const {register,
         handleSubmit,
-        setError,
         formState:{errors, isValid}} = useForm({
         defaultValues:{
             email: '',
@@ -23,9 +22,16 @@ export const Login = () => {
         mode: 'onChange',
     });
 
-    const onSubmit = (values) =>{
-        dispatch(fetchAuth(values));
-    }
+    const onSubmit = async (values) =>{
+        const data =await dispatch(fetchAuth(values));
+        if(data.payload){
+            return alert('Авторизація успішна')
+        }
+        if ('token' in data.payload) {
+            window.localStorage.setItem('token', data.payload.token);
+        }
+    };
+
 
     if (isAuth){
         return <Navigate to = "/"/>;
@@ -34,7 +40,7 @@ export const Login = () => {
   return (
     <Paper classes={{ root: styles.root }}>
       <Typography classes={{ root: styles.title }} variant="h5">
-        Вход в аккаунт
+        Вхід до акаунту
       </Typography>
         <form onSubmit={handleSubmit(onSubmit)}>
             <TextField
@@ -53,8 +59,8 @@ export const Login = () => {
                 helperText= {errors.password?.message}
                 {...register('password', {required: 'Вкажіть пароль'})}
                 fullWidth />
-            <Button type="submit" size="large" variant="contained" fullWidth>
-                Войти
+            <Button disabled={!isValid} type="submit" size="large" variant="contained" fullWidth>
+                Увійти
             </Button>
         </form>
     </Paper>

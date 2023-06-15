@@ -9,7 +9,7 @@ export default (req, res, next)=>{
             req.userId= decoded._id;
             next();
         }catch (e){
-            return res.status(403).json({
+            return res.status(402).json({
                 message:'Немає доступу',
             });
         }
